@@ -94,7 +94,7 @@ async function handleSendMessage() {
         removeTypingIndicator();
 
         // Adicionar resposta do bot
-        if (response.answer) {
+        if (response && response.answer) {
             addMessage(response.answer, false);
         }
 
