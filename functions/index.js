@@ -12,105 +12,50 @@ const ABACUS_CONFIG = {
 exports.chatWithLucida = functions.https.onRequest((req, res) => {
     return cors(req, res, async () => {
         try {
-            // Validar método
             if (req.method !== 'POST') {
-                return res.status(405).json({
-                    error: 'Método não permitido',
-                    details: 'Apenas POST é aceito'
-                });
+                return res.status(405).json({ error: 'Método não permitido', details: 'Apenas POST é aceito' });
             }
 
-            // Validar token
             const abacusToken = functions.config().abacus.api_token;
             if (!abacusToken) {
-                console.error('Token do Abacus não configurado');
-                return res.status(500).json({
-                    error: 'Erro de configuração',
-                    details: 'Token não configurado'
-                });
+                return res.status(500).json({ error: 'Erro de configuração', details: 'Token não configurado' });
             }
 
-            // Validar mensagem
             const { message, conversation_id } = req.body;
             if (!message) {
-                return res.status(400).json({
-                    error: 'Mensagem inválida',
-                    details: 'A mensagem é obrigatória'
-                });
+                return res.status(400).json({ error: 'Mensagem inválida', details: 'A mensagem é obrigatória' });
             }
 
-            // Configurar request para o Abacus
-            const abacusUrl = `${ABACUS_CONFIG.BASE_URL}/api/${ABACUS_CONFIG.API_VERSION}/deployment/predict`;
+            const abacusUrl = `https://apps.abacus.ai/api/getChatResponse?deploymentToken=${abacusToken}&deploymentId=${ABACUS_CONFIG.DEPLOYMENT_ID}`;
+
             const payload = {
-                deployment_token: abacusToken,
-                deployment_id: ABACUS_CONFIG.DEPLOYMENT_ID,
-                prediction_input: {
-                    question: message
-                }
+                messages: [
+                    { is_user: true, text: message }
+                ]
             };
 
-            // Adicionar conversation_id se existir
-            if (conversation_id) {
-                payload.conversation_id = conversation_id;
+            const abacusResponse = await axios.post(abacusUrl, payload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                timeout: 30000
+            });
+
+            if (!abacusResponse.data || !abacusResponse.data.response) {
+                throw new Error('Resposta inválida da Abacus');
             }
 
-            try {
-                // Fazer request para o Abacus
-                const abacusResponse = await axios({
-                    method: 'post',
-                    url: abacusUrl,
-                    data: payload,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    timeout: 30000 // 30 segundos timeout
-                });
-
-                // Validar resposta
-                if (!abacusResponse.data || !abacusResponse.data.prediction_output) {
-                    throw new Error('Resposta inválida do Abacus');
-                }
-
-                // Retornar resposta formatada
-                return res.json({
-                    answer: abacusResponse.data.prediction_output.answer,
-                    conversation_id: abacusResponse.data.conversation_id
-                });
-
-            } catch (abacusError) {
-                console.error('Erro na chamada do Abacus:', {
-                    status: abacusError.response?.status,
-                    data: abacusError.response?.data,
-                    message: abacusError.message
-                });
-
-                // Tratamento específico de erros do Abacus
-                if (abacusError.response?.status === 401) {
-                    return res.status(500).json({
-                        error: 'Erro de autenticação',
-                        details: 'Token do Abacus inválido'
-                    });
-                }
-
-                if (abacusError.response?.status === 404) {
-                    return res.status(500).json({
-                        error: 'Deployment não encontrado',
-                        details: 'Verifique o ID do deployment'
-                    });
-                }
-
-                return res.status(500).json({
-                    error: 'Erro na comunicação com Abacus',
-                    details: abacusError.message
-                });
-            }
+            return res.json({
+                answer: abacusResponse.data.response,
+                conversation_id: abacusResponse.data.conversation_id
+            });
 
         } catch (error) {
-            console.error('Erro geral:', error);
+            console.error('Erro geral:', error.response?.data || error.message);
             return res.status(500).json({
-                error: 'Erro interno',
-                details: error.message
+                error: 'Erro na comunicação com Abacus',
+                details: error.response?.data || error.message
             });
         }
     });
