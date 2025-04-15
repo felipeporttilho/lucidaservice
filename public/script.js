@@ -2,7 +2,11 @@
 const conversationId = "14241f6bc4";
 const FIREBASE_URL = 'https://us-central1-lucidaservice-bd03c.cloudfunctions.net/chatWithLucida';
 
-// Função para enviar mensagem
+/**
+ * 
+ * @param {string} message Mensagem do input do usuario
+ * @returns Retorna um objeto contendo answer com a resposta da Lucida :)
+ */
 async function sendMessage(message) {
     try {
         const response = await fetch('https://us-central1-lucidaservice-bd03c.cloudfunctions.net/chatWithLucida', {
@@ -19,6 +23,7 @@ async function sendMessage(message) {
     
         const data = await response.json();
         console.log('Resposta da API:', data);
+        return data;
       } catch (error) {
         console.error('Erro ao enviar mensagem:', error);
         throw error;
@@ -78,6 +83,7 @@ async function handleSendMessage() {
 
         // Enviar mensagem e esperar resposta
         const response = await sendMessage(message);
+        console.log("response no front", response);
 
         // Remover indicador de digitação
         removeTypingIndicator();
