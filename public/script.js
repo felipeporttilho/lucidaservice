@@ -5,37 +5,21 @@ const FIREBASE_URL = 'https://us-central1-lucidaservice-bd03c.cloudfunctions.net
 // Função para enviar mensagem
 async function sendMessage(message) {
     try {
-        console.log('Enviando mensagem:', message);
-        console.log('ID da conversa:', conversationId);
-        const response = await fetch(FIREBASE_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            mode: 'cors',
-            body: JSON.stringify({
-                message: message,
-                conversation_id: conversationId
-            })
+        const response = await fetch('https://us-central1-lucidaservice-bd03c.cloudfunctions.net/chatWithLucida', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ mensagem }),
         });
-
-        console.log('Status da resposta:', response.status);
-
-        const data = await response.json();
-        
+    
         if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status} - ${JSON.stringify(data)}`);
+          throw new Error(`Erro HTTP: ${response.status} - ${response.statusText}`);
         }
-
-        // Atualizar conversation_id se existir
-        if (data.conversation_id) {
-            conversationId = data.conversation_id;
-        }
-
-        return data;
-
-    } catch (error) {
+    
+        const data = await response.json();
+        console.log('Resposta da API:', data);
+      } catch (error) {
         console.error('Erro ao enviar mensagem:', error);
         throw error;
     }
