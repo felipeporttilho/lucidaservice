@@ -39,14 +39,14 @@ exports.chatWithLucida = functions.https.onRequest((req, res) => {
             const stringifiedPayload = JSON.stringify(payload);
             console.log("payload", stringifiedPayload);
 
-            const abacusResponse = await axios.post(abacusUrl, stringifiedPayload, {
+            const abacusResponse = await axios.post(abacusUrl, payload, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
                 timeout: 30000
             });
-            console.log("resposta da abacus:", abacusResponse)
+            console.log("resposta da abacus:", abacusResponse.data);
 
             if (!abacusResponse.data || !abacusResponse.data.response) {
                 throw new Error('Resposta inválida da Abacus');
