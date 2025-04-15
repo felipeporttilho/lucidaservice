@@ -48,13 +48,17 @@ exports.chatWithLucida = functions.https.onRequest((req, res) => {
             });
             console.log("resposta da abacus:", abacusResponse.data);
 
-            if (!abacusResponse.data || !abacusResponse.data.response) {
+            if (!abacusResponse.data || !abacusResponse.data.success) {
                 throw new Error('Resposta inválida da Abacus');
             }
 
+            const abacusMessages = abacusResponse?.data?.response?.messages;
+
+            console.log("abacus messages", abacusMessages);
+
             return res.json({
-                answer: abacusResponse.data.response,
-                conversation_id: abacusResponse.data.conversation_id
+                answer: abacusMessages[abacusMessages.length - 1]?.text,
+                // conversation_id: abacusResponse.data.conversation_id
             });
 
         } catch (error) {
