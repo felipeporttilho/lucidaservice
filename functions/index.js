@@ -29,6 +29,7 @@ exports.chatWithLucida = functions.https.onRequest((req, res) => {
             }
 
             const abacusUrl = `https://apps.abacus.ai/api/getChatResponse?deploymentToken=${abacusToken}&deploymentId=${ABACUS_CONFIG.DEPLOYMENT_ID}`;
+            console.log("abacus url", abacusUrl);            
 
             const payload = {
                 messages: [
@@ -43,6 +44,7 @@ exports.chatWithLucida = functions.https.onRequest((req, res) => {
                 },
                 timeout: 30000
             });
+            console.log("resposta da abacus:", abacusResponse)
 
             if (!abacusResponse.data || !abacusResponse.data.response) {
                 throw new Error('Resposta inválida da Abacus');
