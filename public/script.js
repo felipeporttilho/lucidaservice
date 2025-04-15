@@ -10,7 +10,7 @@ async function sendMessage(message) {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ mensagem }),
+          body: JSON.stringify({ message }),
         });
     
         if (!response.ok) {
