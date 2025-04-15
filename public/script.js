@@ -1,5 +1,5 @@
 // Variáveis globais
-let conversationId = null;
+const conversationId = "14241f6bc4";
 const FIREBASE_URL = 'https://us-central1-lucidaservice-bd03c.cloudfunctions.net/chatWithLucida';
 
 // Função para enviar mensagem
