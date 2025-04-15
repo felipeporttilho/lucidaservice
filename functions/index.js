@@ -36,8 +36,10 @@ exports.chatWithLucida = functions.https.onRequest((req, res) => {
                     { is_user: true, text: message }
                 ]
             };
+            const stringifiedPayload = JSON.stringify(payload);
+            console.log("payload", stringifiedPayload);
 
-            const abacusResponse = await axios.post(abacusUrl, JSON.stringify(payload), {
+            const abacusResponse = await axios.post(abacusUrl, stringifiedPayload, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
