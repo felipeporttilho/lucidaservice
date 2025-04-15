@@ -23,7 +23,10 @@ async function sendMessage(message) {
     
         const data = await response.json();
         console.log('Resposta da API:', data);
-        return data;
+        if (data) {
+            return data;
+        }
+        return null;
       } catch (error) {
         console.error('Erro ao enviar mensagem:', error);
         throw error;
@@ -82,6 +85,8 @@ async function handleSendMessage() {
         showTypingIndicator();
 
         // Enviar mensagem e esperar resposta
+        console.log("message antes de chamar o sendMessage", message);
+        
         const response = await sendMessage(message);
         console.log("response no front", response);
 
