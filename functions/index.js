@@ -16,7 +16,9 @@ exports.chatWithLucida = functions.https.onRequest((req, res) => {
                 return res.status(405).json({ error: 'Método não permitido', details: 'Apenas POST é aceito' });
             }
 
-            const abacusToken = functions.config().abacus.api_token;
+            // const abacusToken = functions.config().abacus.api_token;
+            const abacusToken = "89a0671ce5904784a08129f771c9d0e0";
+            console.log("abacus token", abacusToken);
             if (!abacusToken) {
                 return res.status(500).json({ error: 'Erro de configuração', details: 'Token não configurado' });
             }
