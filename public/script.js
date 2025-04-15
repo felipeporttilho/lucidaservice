@@ -6,7 +6,7 @@ const FIREBASE_URL = 'https://us-central1-lucidaservice-bd03c.cloudfunctions.net
 async function sendMessage(message) {
     try {
         console.log('Enviando mensagem:', message);
-        
+        console.log('ID da conversa:', conversationId);
         const response = await fetch(FIREBASE_URL, {
             method: 'POST',
             headers: {
