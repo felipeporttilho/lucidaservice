@@ -52,7 +52,7 @@ exports.chatWithLucida = functions.https.onRequest((req, res) => {
                 throw new Error('Resposta inválida da Abacus');
             }
 
-            const abacusMessages = abacusResponse?.data?.response?.messages;
+            const abacusMessages = abacusResponse?.data?.result?.messages;
 
             console.log("abacus messages", abacusMessages);
 
